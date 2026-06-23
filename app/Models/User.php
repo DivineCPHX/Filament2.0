@@ -65,4 +65,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(City::class);
     }
+
+    public function isAdmin()
+    {
+        return $this->type === 'admin';
+    }
+
+    public function isManager()
+    {
+        return $this->type === 'manager';
+    }
+
+    public function isUser()
+    {
+        return $this->type === 'user';
+    }
 }
