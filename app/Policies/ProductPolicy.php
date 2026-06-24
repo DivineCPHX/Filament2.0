@@ -13,7 +13,8 @@ class ProductPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isUser || $user->isAdmin || $user->isManager;
+        return $user->isUser() || $user->isAdmin() || $user->isManager();
+        // return false;
     }
 
     /**
@@ -21,7 +22,8 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        return true;
+        return $user->isUser() || $user->isAdmin() || $user->isManager();
+
     }
 
     /**
@@ -29,7 +31,7 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->isManager() || $user->isAdmin();
     }
 
     /**
@@ -37,7 +39,7 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return false;
+        return $user->isManager() || $user->isAdmin();
     }
 
     /**
@@ -45,7 +47,7 @@ class ProductPolicy
      */
     public function delete(User $user, Product $product): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -53,7 +55,7 @@ class ProductPolicy
      */
     public function restore(User $user, Product $product): bool
     {
-        return false;
+        return $user->isManager() || $user->isAdmin();
     }
 
     /**
@@ -61,7 +63,7 @@ class ProductPolicy
      */
     public function forceDelete(User $user, Product $product): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -69,7 +71,7 @@ class ProductPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -77,7 +79,7 @@ class ProductPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return false;
+        return $user->isManager() || $user->isAdmin();
     }
 
     /**
@@ -85,6 +87,6 @@ class ProductPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 }
