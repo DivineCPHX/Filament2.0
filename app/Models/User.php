@@ -2,22 +2,44 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
 use Database\Factories\UserFactory;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
+use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+    use InteractsWithAppAuthentication;
+    use InteractsWithAppAuthenticationRecovery;
+    use InteractsWithEmailAuthentication;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+
+
     protected $fillable = [
         'name',
         'email',
@@ -36,6 +58,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'app_authentication_secret'
     ];
 
     /**
@@ -48,8 +71,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'app_authentication_secret' => 'encrypted'
         ];
     }
+
 
     public function country()
     {
